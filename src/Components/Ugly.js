@@ -1,41 +1,12 @@
 import React, {useState, useContext, useEffect} from "react"
 import Card from "./SubComponents/Card"
-import axios from "axios"
+import { AxiosContext } from "./SubComponents/AxiosContext"
 
 const Ugly = () => {
-    const [ugly, setUgly] = useState({
-        title: "Harley",
-        description: "the ugly goldfish",
-        imgUrl: "https://pbs.twimg.com/media/Bc_B4vrCMAIPZck.png",
-    })
-    const [uglyList, setUglyList] = useState([])
-    const baseURL = "https://api.vschool.io/adamrawlins/thing/"
-
-    const GetAll = () => {
-        axios.get(`${baseURL}`)
-        .then(res => {
-            console.log(res.data, "getting")
-            setUglyList(res.data)
-        })
-        .catch(err => console.log(err))
-    }
-
-    const PostOne = () => {
-      axios.post(`${baseURL}`, {
-        title: ugly.title,
-        description: ugly.description,
-        imgUrl: ugly.imgUrl,
-      })
-      .then(res => {
-        GetAll()
-        }
-      )
-      .catch(err => console.log(err))
-    }
+    const {ugly, setUgly, uglyList, GetAll, PostOne} = useContext(AxiosContext)
 
     useEffect(() => {GetAll()}, [])
 
-    // let mappedList = uglyList.map((param1, index) => {
     let mappedList = uglyList.map((param1, index) => {
     return(
             <ul>
@@ -44,7 +15,6 @@ const Ugly = () => {
                     id = {param1.id}
                     data = {uglyList}
                     imgUrl = {param1.imgUrl}
-                    baseURL = {baseURL}
                 />
             </ul>
         )

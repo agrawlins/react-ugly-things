@@ -1,5 +1,5 @@
 import React, {useState, useContext} from "react";
-import axios from "axios";
+import { AxiosContext } from "./AxiosContext";
 
 const Card = (props) => {
     const [card, setCard] = useState({
@@ -8,14 +8,7 @@ const Card = (props) => {
         imgUrl: props.imgUrl
     })
     const [edit, setEdit] = useState(false)
-
-    const GetAll = () => {
-        axios.get(`${props.baseURL}`)
-        .then(res => {
-            console.log(res.data, "getting")
-        })
-        .catch(err => console.log(err))
-    }
+    const {PutOne, DeleteOne} = useContext(AxiosContext)
 
     const handleChange = (event) => {
         const {name, value} = event.target
@@ -28,34 +21,8 @@ const Card = (props) => {
     const handleSubmit = (event) => {
         event.preventDefault()
         const {name, value} = event.target
-        EditUgly(props._id, card) 
+        PutOne(props._id, card) 
         setEdit(!edit)  
-    }
-
-    const refreshPage = () => {
-        window.location.reload(false)
-    }
-
-    const EditUgly = (id, card) => {
-        console.log("Ugly Edited! Let's see if it was an improvement...")
-        axios.put(`${props.baseURL}/${props._id}`, {
-            title: card.title,
-            description: card.description
-          })
-          .then(res => {
-            refreshPage()
-            }
-          )
-          .catch(err => console.log(err))
-    }
-
-    const deleteUgly = () => {
-        axios.delete(`${props.baseURL}/${props._id}`)
-        .then(res => {
-            refreshPage()
-            }
-          )
-        .catch(err => console.log(err))
     }
 
   return(
@@ -65,17 +32,26 @@ const Card = (props) => {
             <h3 className="ugly--cardText Middle">{card.description}</h3>
             <img src={card.imgUrl} className="ugly--image"/>
             <div className="cardButtons" id={props.id}>
-                <button className = "deleteButton" onClick={() => deleteUgly(props.id)}>X</button>
+                <button className = "deleteButton" onClick={() => DeleteOne(props._id)}>X</button>
                 <button className="editButton" style={{display: edit ? "none" : "block"}}  onClick={() => {setEdit(!edit)}}>Edit</button> 
             </div>
         </li>
         <div className="cardInputs">
             <form className="form" style={{display: edit ? "block" : "none"}} onSubmit ={handleSubmit}>
+            <label style={{color: "white"}}>Image URL</label>
+                <br/>
+                <input 
+                    type="url"
+                    className="form--input"
+                    name="imgUrl"
+                    value={card.imgUrl}
+                    onChange={handleChange}
+                />
+                <br/>
                 <label style={{color: "white"}}>Title</label>
                 <br/>
                 <input 
                     type="text"
-                    placeholder="Top text"
                     className="form--input"
                     name="title"
                     value={card.title}
@@ -86,7 +62,6 @@ const Card = (props) => {
                 <br/>
                 <input 
                     type="text"
-                    placeholder="Bottom text"
                     className="form--input"
                     name="description"
                     value={card.description}
