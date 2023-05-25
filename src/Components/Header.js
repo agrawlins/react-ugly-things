@@ -14,7 +14,7 @@ const Header = () => {
           music.play();
         }
       }
-
+      
     return(
         <header className="header">
             <img src={Harley} className="header--image"/>
